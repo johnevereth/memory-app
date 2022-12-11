@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import SingleCard from "./components/SingleCard";
 
 const cardImages = [
@@ -24,22 +24,45 @@ function App() {
   const [gamePage, setGamePage] = useState(false);
   const [difficulty, setDifficulty] = useState("null");
   const [requirement, setRequirement] = useState(false);
-
-  if (guessesLeft === 0 || timer === 0) {
-    setMainPage(false);
-    setGamePage(false);
-    setYouWon(false);
-    setGameStarted(false);
-    setDifficulty("null");
-    setRequirement(false);
-    setYouLost(true);
-  }
-
   const [cards, setCards] = useState([]);
   const [turns, setTurns] = useState(0);
   const [choiceOne, setChoiceOne] = useState(null);
   const [choiceTwo, setChoiceTwo] = useState(null);
   const [disabled, setDisabled] = useState(false);
+
+  const intervalRef = useRef();
+  intervalRef.current = timer;
+
+  useEffect(() => {
+    if (guessesLeft === 0 || timer === 0) {
+      setYouLost(true);
+      setMainPage(false);
+      setGamePage(false);
+      setYouWon(false);
+      setGameStarted(false);
+      setDifficulty("null");
+      setRequirement(false);
+      setTimer(99999999999);
+    }
+  }, [guessesLeft, timer]);
+
+  useEffect(() => {
+    const countdown = setInterval(() => {
+      if (gameStarted) {
+        if (intervalRef.current === 0) {
+          clearInterval(countdown);
+        } else {
+          if (intervalRef.current > 1) {
+            setTimer(intervalRef.current - 1);
+          } else {
+            clearInterval(countdown);
+          }
+        }
+      }
+    }, 1000);
+
+    return () => clearInterval(countdown);
+  }, [gameStarted]);
 
   const shuffleCards = () => {
     const shuffledCards = [...cardImages, ...cardImages]
@@ -137,14 +160,14 @@ function App() {
               } else {
                 setGamePage(true);
                 if (difficulty === "easy") {
+                  setTimer(120);
+                  setGuessesLeft(20);
+                } else if (difficulty === "medium") {
                   setTimer(90);
                   setGuessesLeft(15);
-                } else if (difficulty === "medium") {
+                } else if (difficulty === "hard") {
                   setTimer(60);
                   setGuessesLeft(10);
-                } else if (difficulty === "hard") {
-                  setTimer(45);
-                  setGuessesLeft(5);
                 }
                 setGameStarted(true);
                 setMainPage(false);
@@ -190,9 +213,63 @@ function App() {
           </div>
         </div> // You are not on the main page and are on the game page
       ) : youWon ? (
-        <div></div> // You are not on the main page and are not on the game page and are on the "you won" page
+        <div className="bg-black w-[30%] h-[60%] rounded-lg flex flex-col items-center">
+          <h1 className="font-creepster text-orange text-5xl text-center mt-10">
+            You won!
+          </h1>
+          <p className="font-abel text-white mt-5">
+            Your superior memory frightens me.
+          </p>
+          <button
+            className="bg-orange text-white hover:bg-white hover:text-black rounded-lg w-[70%] h-20 text-3xl uppercase mt-6"
+            onClick={() => {
+              setGameStarted(false);
+              setGuessesLeft(1);
+              setTimer(99999999999);
+              setYouWon(false);
+              setYouLost(false);
+              setMainPage(true);
+              setGamePage(false);
+              setDifficulty("null");
+              setRequirement(false);
+              setCards([]);
+              setTurns(0);
+              setChoiceOne(null);
+              setChoiceTwo(null);
+              setDisabled(false);
+            }}
+          >
+            Play again?
+          </button>
+        </div> // You are not on the main page and are not on the game page and are on the "you won" page
       ) : (
-        <div className="bg-black w-[70%] h-[85%] rounded-lg flex flex-row justify-between py-8 px-12"></div> // You are on the main page, game page, or the "you won" page, so you are on the "you lost" page
+        <div className="bg-black w-[30%] h-[60%] rounded-lg flex flex-col items-center">
+          <h1 className="font-creepster text-orange text-5xl text-center mt-10">
+            You lost!
+          </h1>
+          <p className="font-abel text-white mt-5">Better luck next time.</p>
+          <button
+            className="bg-orange text-white hover:bg-white hover:text-black rounded-lg w-[70%] h-20 text-3xl uppercase mt-6"
+            onClick={() => {
+              setGameStarted(false);
+              setGuessesLeft(1);
+              setTimer(99999999999);
+              setYouWon(false);
+              setYouLost(false);
+              setMainPage(true);
+              setGamePage(false);
+              setDifficulty("null");
+              setRequirement(false);
+              setCards([]);
+              setTurns(0);
+              setChoiceOne(null);
+              setChoiceTwo(null);
+              setDisabled(false);
+            }}
+          >
+            Play again?
+          </button>
+        </div> // You are not on the main page, game page, or the "you won" page, so you are on the "you lost" page
       )}
     </div>
   );
