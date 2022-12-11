@@ -47,6 +47,28 @@ function App() {
   }, [guessesLeft, timer]);
 
   useEffect(() => {
+    let matchedCards = [];
+    let oneMatch;
+    cards.map((card) => {
+      if (card.matched) {
+        oneMatch = matchedCards.push(card);
+      }
+      return oneMatch;
+    });
+
+    if (matchedCards.length === 20) {
+      setYouWon(true);
+      setMainPage(false);
+      setGamePage(false);
+      setYouLost(false);
+      setGameStarted(false);
+      setDifficulty("null");
+      setRequirement(false);
+      setTimer(99999999999);
+    }
+  }, [cards]);
+
+  useEffect(() => {
     const countdown = setInterval(() => {
       if (gameStarted) {
         if (intervalRef.current === 0) {
@@ -218,8 +240,8 @@ function App() {
           <h1 className="font-creepster text-orange text-8xl text-center mt-16">
             You won!
           </h1>
-          <p className="font-abel text-2xl text-white mt-5">
-            Your superior memory frightens me.
+          <p className="font-abel text-2xl text-white mt-5 px-3 text-center">
+            Only took you {turns} turns. Your superior memory frightens me.
           </p>
           <button
             className="bg-orange text-white hover:bg-white hover:text-black rounded-lg w-[70%] h-20 text-3xl uppercase mt-6"
@@ -245,9 +267,11 @@ function App() {
         </div> // You are not on the main page and are not on the game page and are on the "you won" page
       ) : (
         <div className="bg-black w-[30%] h-[60%] rounded-lg flex flex-col items-center">
-          <h1 className="font-creepster text-orange text-8xl text-center mt-16">
-            You lost!
-          </h1>
+          {youLost && (
+            <h1 className="font-creepster text-orange text-8xl text-center mt-16">
+              You lost!
+            </h1>
+          )}
           <p className="font-abel text-2xl text-white mt-5">
             Better luck next time.
           </p>
