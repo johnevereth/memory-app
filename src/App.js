@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import SingleCard from "./components/SingleCard";
+import useWindowSize from "react-use/lib/useWindowSize";
+import Confetti from "react-confetti";
 
 const cardImages = [
   { src: "/images/card-front-baseball-bat.png", matched: false },
@@ -32,6 +34,8 @@ function App() {
 
   const intervalRef = useRef();
   intervalRef.current = timer;
+
+  const { width, height } = useWindowSize();
 
   useEffect(() => {
     if (guessesLeft === 0 || timer === 0) {
@@ -237,11 +241,16 @@ function App() {
         </div> // You are not on the main page and are on the game page
       ) : youWon ? (
         <div className="bg-black w-[30%] h-[60%] rounded-lg flex flex-col items-center">
+          <Confetti
+            width={width}
+            height={height}
+            colors={["#FFFCF2", "#CCC5B9", "#403D39", "#252422", "#EB5E28"]}
+          />
           <h1 className="font-creepster text-orange text-8xl text-center mt-16">
             You won!
           </h1>
-          <p className="font-abel text-2xl text-white mt-5 px-3 text-center">
-            Only took you {turns} turns. Your superior memory frightens me.
+          <p className="font-abel text-2xl text-white mt-4 px-8 text-center">
+            Wow, only {turns} turns! <br /> Your superior memory frightens me.
           </p>
           <button
             className="bg-orange text-white hover:bg-white hover:text-black rounded-lg w-[70%] h-20 text-3xl uppercase mt-6"
