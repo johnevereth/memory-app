@@ -52,7 +52,7 @@ function App() {
         if (intervalRef.current === 0) {
           clearInterval(countdown);
         } else {
-          if (intervalRef.current > 1) {
+          if (intervalRef.current >= 1) {
             setTimer(intervalRef.current - 1);
           } else {
             clearInterval(countdown);
@@ -93,6 +93,7 @@ function App() {
         resetTurn();
       } else {
         setTimeout(() => resetTurn(), 1000);
+        setGuessesLeft((prevGuesses) => prevGuesses - 1);
       }
     }
   }, [choiceOne, choiceTwo]);
@@ -214,10 +215,10 @@ function App() {
         </div> // You are not on the main page and are on the game page
       ) : youWon ? (
         <div className="bg-black w-[30%] h-[60%] rounded-lg flex flex-col items-center">
-          <h1 className="font-creepster text-orange text-5xl text-center mt-10">
+          <h1 className="font-creepster text-orange text-8xl text-center mt-16">
             You won!
           </h1>
-          <p className="font-abel text-white mt-5">
+          <p className="font-abel text-2xl text-white mt-5">
             Your superior memory frightens me.
           </p>
           <button
@@ -244,10 +245,12 @@ function App() {
         </div> // You are not on the main page and are not on the game page and are on the "you won" page
       ) : (
         <div className="bg-black w-[30%] h-[60%] rounded-lg flex flex-col items-center">
-          <h1 className="font-creepster text-orange text-5xl text-center mt-10">
+          <h1 className="font-creepster text-orange text-8xl text-center mt-16">
             You lost!
           </h1>
-          <p className="font-abel text-white mt-5">Better luck next time.</p>
+          <p className="font-abel text-2xl text-white mt-5">
+            Better luck next time.
+          </p>
           <button
             className="bg-orange text-white hover:bg-white hover:text-black rounded-lg w-[70%] h-20 text-3xl uppercase mt-6"
             onClick={() => {
